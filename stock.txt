@@ -1,0 +1,1 @@
+van,bmw,x3,500,urbano,10000,7
