@@ -1,9 +1,13 @@
 from Biblioteca import *
 from Clases import *
+from datetime import *
+
+print(datetime.now())
+
 
 # Cargar el stock de vehículos del archivo "stock.txt"
 nombre_archivo = "stock.txt"
-lista_entrelazada = cargar_stock(nombre_archivo)
+lista_entrelazada = descargar_stock(nombre_archivo)
 
 # Agregar un nuevo vehículo
 n=True
@@ -13,7 +17,6 @@ while n==True:
         n=True
     else:
         n=False
-# print(f"Se agregó el vehículo {str(nuevo_auto)} al stock")
 
 # Mostrar el stock de vehículos actualizado
 print("Stock actualizado:")
@@ -22,9 +25,12 @@ print(lista_entrelazada)
 # Guardar el stock de vehículos en el archivo "stock.txt"
 guardar_stock(nombre_archivo, lista_entrelazada)
 
+#filtro
+print(filtro(lista_entrelazada.vehiculo))
+
 
 # Pedir el nombre de un vehículo para comprar
-marca_vehiculo_comprado = input("Ingrese el nombre del vehículo que desea comprar: ")
+marca_vehiculo_comprado = input("Ingrese la marca del vehículo que desea comprar: ")
 modelo_vehiculo_comprado = input("Ingrese el modelo del vehículo que desea comprar: ")
 vehiculo_comprado = None
 actual = lista_entrelazada.cabeza 

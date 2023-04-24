@@ -1,0 +1,2 @@
+['cliente@cliente.com', datetime.datetime(2023, 4, 24, 10, 4, 34, 46207), 'Marca: bmw, Modelo: ex7, Precio: 20000,Autonomia: 300, Uso: urbano, Tiempo de carga: 12']
+['cliente@cliente.com', datetime.datetime(2023, 4, 24, 10, 4, 53, 390025), 'Marca: bmw, Modelo: ex7, Precio: 20000,Autonomia: 300, Uso: urbano, Tiempo de carga: 12']

@@ -1,3 +1,5 @@
+#Clases Usuarios
+# clase usuario general de esta se hereda administrador y cliente
 class Usuario:
     def __init__(self, nombre, email, password):
         self.nombre = nombre
@@ -6,6 +8,33 @@ class Usuario:
 
     def __str__(self):
         return f"{self.nombre} ({self.email})"
+
+class cliente(Usuario):
+    def __init__(self,nombre,email,password):
+        super().__init__(nombre,email,password)
+        self.compras=[]
+    def registro_compras(self):
+        self.compras.append(self.compras)
+        with open(f'{self.email}.txt', 'a') as f:
+            f.write(f'{self.tipo},{self.marca},{self.modelo},{self.precio}\n')
+
+    def __str__(self):
+        return super().__str__() + f", Compras: {self.compras}"
+
+class administrador(Usuario):
+    def __init__(self,nombre,email,password, es_admin):
+        super().__init__(nombre,email,password)
+        self.es_admin = None
+    def es_administrador(self):
+        if self.email == 'sistema.com.ar':
+            self.es_admin = True
+            return self.es_admin 
+        else:
+            self.es_admin = False
+            return self.es_admin 
+    def __str__(self):
+        return super().__str__() + f", Ventas: {self.ventas}"
+
 
 class RegistroUsuarios:
     def __init__(self):
@@ -30,7 +59,13 @@ class RegistroUsuarios:
                     self.usuarios.append(Usuario(nombre, email, password))
         except FileNotFoundError:
             pass
-
+    def buscar_usuario(self, email):
+        for usuario in self.usuarios:
+            if usuario.email == email:
+                print(f"El usuario {usuario.email} ya existe")
+                return False
+        return None
+# Ver opcion sin clase
 class Login:
     def __init__(self, registro_usuarios):
         self.registro_usuarios = registro_usuarios
@@ -46,47 +81,79 @@ class Login:
     def cerrar_sesion(self):
         self.usuario_actual = None
 
+class cliente(Usuario):
+    def __init__(self,nombre,email,password):
+        super().__init__(nombre,email,password)
+        self.compras=[self.email]
+    def agregar_compra(self,compra):
+        self.compras.append(compra)
+    def guardar_compras(self):
+        with open("compras.txt", "w") as f:
+            for compra in self.compras:
+                f.write(f"{compra}\n")
+        f.close()
+    def descargar_compras(self):
+        try:
+            with open("compras.txt", "r") as f:
+                for linea in f:
+                    self.compras.append(linea.strip())
+                f.close()
+        except FileNotFoundError:
+            pass
+    def __str__(self):
+        return super().__str__() + f", Compras: {self.compras}"
+
+class administrador(Usuario):
+    def __init__(self,nombre,email,password):
+        super().__init__(nombre,email,password)
+    
+
+
+    def __str__(self):
+        return super().__str__() + f", Ventas: {self.ventas}"
+
 class Vehiculo:
-    def __init__(self, modelo, marca, autonomia, uso, precio):
+    def __init__(self, modelo, marca, precio,  autonomia, uso):
         self.modelo = modelo
         self.marca = marca
+        self.precio = precio
         self.autonomia = autonomia
         self.uso = uso
-        self.precio = precio
     def __str__(self):
-        return f"Marca: {self.marca}, Modelo: {self.modelo}, Autonomia: {self.autonomia}, Uso: {self.uso}, Precio: {self.precio}"
+        return f"Marca: {self.marca}, Modelo: {self.modelo}, Precio: {self.precio},Autonomia: {self.autonomia}, Uso: {self.uso}"
 
 class Utilitario(Vehiculo):
-    def __init__(self, marca, modelo, autonomia, uso, precio, carga_maxima):
-        super().__init__(modelo, marca, autonomia, uso, precio)
+    def __init__(self, marca, modelo, precio, autonomia, uso, carga_maxima):
+        super().__init__(modelo, marca, precio,autonomia, uso)
         self.carga_maxima = carga_maxima
     def __str__(self):
         return super().__str__() + f", Carga máxima: {self.carga_maxima}"
         
 class Deportivo(Vehiculo):
-    def __init__(self, marca, modelo, autonomia, uso, precio, velocidad_maxima):
-        super().__init__(modelo, marca, autonomia, uso, precio)
+    def __init__(self, marca, modelo, precio, autonomia, uso, velocidad_maxima):
+        super().__init__(modelo, marca, precio,autonomia, uso)
         self.velocidad_maxima = velocidad_maxima
     def __str__(self):
         return super().__str__() + f", Velocidad máxima: {self.velocidad_maxima}"
         
 class Electrico(Vehiculo):
-    def __init__(self, marca, modelo, autonomia, uso, precio, tiempo_carga):
-        super().__init__(modelo, marca, autonomia, uso, precio)
+    def __init__(self, marca, modelo, precio,autonomia, uso, tiempo_carga):
+        super().__init__(modelo, marca, precio,autonomia, uso)
         self.tiempo_carga = tiempo_carga
     def __str__(self):
         return super().__str__() + f", Tiempo de carga: {self.tiempo_carga}"
         
 class Van(Vehiculo):
-    def __init__(self, marca, modelo, autonomia, uso, precio, asientos):
-        super().__init__(modelo, marca, autonomia, uso, precio)
+    def __init__(self, marca, modelo, precio,autonomia, uso, asientos):
+        super().__init__(modelo, marca, precio, autonomia, uso)
         self.asientos = asientos
+
     def __str__(self):
         return super().__str__() + f", Asientos: {self.asientos}"
         
 class Compacto(Vehiculo):
-    def __init__(self, marca, modelo, autonomia, uso, precio, tamaño_baul):
-        super().__init__(modelo, marca, autonomia, uso, precio)
+    def __init__(self, marca, modelo, precio, autonomia, uso,tamaño_baul):
+        super().__init__(modelo, marca, precio,autonomia, uso)
         self.tamaño_baul = tamaño_baul
     def __str__(self):
         return super().__str__() + f", Tamaño del baul: {self.tamaño_baul}"
@@ -100,6 +167,7 @@ class Nodo:
 class Stock(Nodo):
     def __init__(self):
         self.cabeza = None
+
     
     def agregar(self, vehiculo):
         nuevo_nodo = Nodo(vehiculo)
@@ -111,10 +179,11 @@ class Stock(Nodo):
                 actual = actual.siguiente
             actual.siguiente = nuevo_nodo
     
-    def eliminar(self, vehiculo):
+    def eliminar(self, vehiculo, marca, modelo):
+        
         if self.cabeza is None:
             return
-        if self.cabeza.vehiculo == vehiculo:
+        if self.cabeza.vehiculo.marca == marca and self.cabeza.vehiculo.modelo == modelo:
             self.cabeza = self.cabeza.siguiente
             del vehiculo
         else:
@@ -136,3 +205,10 @@ class Stock(Nodo):
                 actual = actual.siguiente
                 resultado += f"\n{str(actual.vehiculo)}"
             return resultado
+    def list(self):
+        lista = []
+        nodo = self.cabeza
+        while nodo is not None:
+            lista.append(nodo.vehiculo)
+            nodo = nodo.siguiente
+        return lista

@@ -1,1 +1,2 @@
-van,bmw,x3,500,urbano,10000,7
+elictrico,bmw,ex7,20000,300,urbano,12
+elictrico,bmw,ex7,20000,300,urbano,12
