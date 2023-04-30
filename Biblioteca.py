@@ -47,7 +47,7 @@ def validar_nombre(nombre):
     return True
 
 def descargar_stock(nombre_archivo):
-    lista_entrelazada = Stock()
+    lista_entrelazada = ListaEnlazada()
     try:
         with open(nombre_archivo, "r") as archivo:
             lineas = archivo.readlines()
@@ -392,7 +392,7 @@ def saque_todos_int(string):
             pass
 
 def descargar_stock_cliente(nombre_archivo):
-    lista_entrelazada = Stock()
+    lista_entrelazada = ListaEnlazada()
     try:
         with open(nombre_archivo, "r") as archivo:
             lineas = archivo.readlines()
@@ -418,7 +418,7 @@ def descargar_stock_cliente(nombre_archivo):
     return lista_entrelazada
 
 def descargar_lista_ventas_estadisticas(nombre_archivo):
-    lista_entrelazada = Stock()
+    lista_entrelazada = ListaEnlazada()
     try:
         with open(nombre_archivo, "r") as archivo:
             lineas = archivo.readlines()
