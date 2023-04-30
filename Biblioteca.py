@@ -160,41 +160,7 @@ def agregar_vehiculo_tipo(n, lista_entrelazada):
                 print("Tipo de vehículo no válido")
                 n=True
                 return n
-# def filtro(lista_entrelazada):
-#     lista=lista_entrelazada.list()
-#     pref=lista
-#     n=False
-#     marca=None
-#     tipo=None
-#     uso=None
-#     precio=None
-#     while n==False:
-#         filtro=input("Ingrese el filtro que desea utilizar: ")
-#         filtro=filtro.lower()
-#         match filtro:
-#             case "marca":
-#                 marca=input("Ingrese la marca que desea buscar: ")
-        
-#             case "tipo":
-#                 tipo=input("Ingrese el tipo que desea buscar: ")
-#             case "uso":
-#                 uso=input("Ingrese el uso que desea buscar: ")
-#             case "precio":
-#                 precio=int(input("Ingrese el precio que desea buscar: "))
-#             case _:
-#                 print("Filtro no válido")
-#         for i in pref:
-#             if i.marca==marca or i.uso==uso or i.precio<=precio:
-#                 pass
-#             else:
-#                 pref.pop(i)
-#         print(pref)
-#         m=m.lower(input("Desea agregar otro filtro? (s/n): "))
-#         if m=="s":
-#             n=False
-#         else: 
-#             n=True
-#     return pref
+
 def eliminar_vehiculo(lista_entrelazada):
     lista=lista_entrelazada.list()
     print(lista)
@@ -265,7 +231,9 @@ def buscar_vehiculo(lista_vehiculos, marca=None, modelo=None, precio=None, auton
     lista_vehiculos = lista_vehiculos.list()
     n = False
     while n==False:
+        print("Filtros disponibles: marca\n modelo\n precio\n autonomia\n uso\n nota: si no desea utilizar un filtro, ingrese 'no'")
         filtro=input("Ingrese el filtro que desea utilizar: ")
+        
         filtro=filtro.lower()
         match filtro:
             case "marca":
@@ -278,6 +246,8 @@ def buscar_vehiculo(lista_vehiculos, marca=None, modelo=None, precio=None, auton
                 precio=int(input("Ingrese el precio que desea buscar: "))
             case "autonomia":
                 autonomia=int(input("Ingrese la autonomía que desea buscar: "))
+            case "no":
+                n=True
             case _:
                 print("Filtro no válido")    
         for vehiculo in lista_vehiculos:
@@ -291,6 +261,7 @@ def buscar_vehiculo(lista_vehiculos, marca=None, modelo=None, precio=None, auton
                 lista_vehiculos.remove(vehiculo)
             if uso is not None and vehiculo.uso != uso:
                 lista_vehiculos.remove(vehiculo)
+            
         m=(input("Desea agregar otro filtro? (s/n): "))
         m=m.lower()
         if m=="s":
@@ -342,15 +313,16 @@ def comprar_vehiculo(vehiculos_filtrados, lista, usuario):
                         print("Opción no válida")
                 # nuevo
                 while b == True:
-                    listaventas.append(str(i))
-                    vehiculos_filtrados.remove(i)
                     print(f"Se compró el vehículo {marca_vehiculo} {modelo_vehiculo}")
                     actual = lista.cabeza 
                     while actual is not None:
                         if str(actual.vehiculo.marca) == marca_vehiculo and str(actual.vehiculo.modelo) == modelo_vehiculo:
                             vehiculo_comprado = actual.vehiculo
                             id = vehiculo_comprado.id
-                            lista.eliminar(vehiculo_comprado,id)
+                            lista.eliminar(id)
+                            dato = f"{usuario.email},{fecha_hora},{vehiculo_comprado.marca},{vehiculo_comprado.modelo},{vehiculo_comprado.precio}\n"
+                            archivo.write(f'{dato}')
+                            archivo.close()
                             break
                         actual = actual.siguiente
                     guardar_stock("stock.txt",lista)
@@ -359,17 +331,32 @@ def comprar_vehiculo(vehiculos_filtrados, lista, usuario):
             else:
                 print("Vehículo no encontrado")
                 n=True
-    archivo.write(str(listaventas))
-    archivo.write("\n")
-    archivo.close()
+
     return vehiculos_filtrados
-def descargar_lista_ventas(archivo):
-    archivo=open("ventas.txt", "r")
-    lista_ventas=[]
-    for linea in archivo:
-        lista_ventas.append(linea)
-    archivo.close()
-    return lista_ventas
+
+def descargar_lista_ventas(nombre_archivo, usuario_actual):
+    lista_entrelazada = Stock()
+    try:
+        with open(nombre_archivo, "r") as archivo:
+            lineas = archivo.readlines()
+            compra = None
+            contador = 0
+            total = 0
+            for linea in lineas:
+                campos = linea.strip().split(",")
+                if campos[0] == usuario_actual.email:
+                    compra = (f"Mail: {campos[0]}, Fecha: {campos[1]}, Marca: {campos[2]}, Modelo: {campos[3]}, Precio: ${campos[4]}")
+                    contador += 1
+                    total += int(campos[4])
+                    lista_entrelazada.agregar(compra)   
+            print(f"Usted ha realizado {contador} compra/s")
+            print(f"El total gastado es de ${total}")
+            print("Detalle de las compras:")
+            print(lista_entrelazada)
+            archivo.close()
+    except:
+        print("No ha realizado ninguna compra")
+    
 def modificar_datos(lista, usuario):
     registro=RegistroUsuarios()
     n=False
@@ -429,3 +416,24 @@ def descargar_stock_cliente(nombre_archivo):
     except FileNotFoundError:
         print("El archivo no existe")
     return lista_entrelazada
+
+def descargar_lista_ventas_estadisticas(nombre_archivo):
+    lista_entrelazada = Stock()
+    try:
+        with open(nombre_archivo, "r") as archivo:
+            lineas = archivo.readlines()
+            compra = None
+            recaudacion = 0
+            contador = 0
+            for linea in lineas:
+                campos = linea.strip().split(",")
+                compra = (f"Mail: {campos[0]}, Fecha: {campos[1]}, Marca: {campos[2]}, Modelo: {campos[3]}, Precio: ${campos[4]}")
+                lista_entrelazada.agregar(compra)
+                recaudacion += int(campos[4])
+                contador += 1
+        print(f"Se han realizado {contador} venta/s")
+        print(f"La facturación total es de: ${recaudacion}")
+        print("Detalle de las ventas:")
+        print(lista_entrelazada)
+    except:
+        print("No ha realizado ninguna compra")

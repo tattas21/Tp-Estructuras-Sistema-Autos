@@ -1,2 +1,0 @@
-van,bmw,x7,40000,500,urbano, 7,BMW-X7_1
-elictrico,tesla,s,60000,300,urbano,300,TES-S_2

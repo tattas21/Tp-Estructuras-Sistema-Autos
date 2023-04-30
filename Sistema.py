@@ -113,8 +113,8 @@ while True:
                             # Ver como implementar bien mathplotlib
                             case "5":
                                 nombre_archivo = "ventas.txt"
-                                lista_entrelazada = descargar_stock(nombre_archivo)
-                                print(lista_entrelazada)
+                                descargar_lista_ventas_estadisticas(nombre_archivo)
+
                             # si esto no funciona estamo mal
                             case "6":
                                 print("Gracias por usar el sistema.")
@@ -139,19 +139,25 @@ while True:
                                 nombre_archivo = "stock.txt"
                                 lista_entrelazada = descargar_stock(nombre_archivo)
                                 comprar_vehiculo(buscar_vehiculo(lista_entrelazada), lista_entrelazada, usuario_actual)
-                            # ver
+                            # si, puede mejorar
                             case "3":
                                 nombre_archivo = "ventas.txt"
-                                lista = descargar_lista_ventas(nombre_archivo)
-                                for i in lista:
-                                    print(i)
-                                    if i[0] == usuario_actual.email:
-                                        print(i)
+                                lista = descargar_lista_ventas(nombre_archivo, usuario_actual)
                             # casiquesi
                             case "4":
                                 print(usuario_actual)
-                                nombre_archivo = "usuarios.txt"
+                                print("1. Modificar nombre")
+                                print("2. Modificar contraseña")
+                                opcion = input("Ingrese una opción (el numero): ")
+                                match opcion:
+                                    case "1":
+                                        nombre = input("Ingrese nueva nombre: ")
+                                        usuario.nombre = nombre
+                                    case "2":
+                                        contraseña = input("Ingrese nueva contraseña: ")
+                                        usuario.password = contraseña
                                 lista_entrelazada = descargar_stock(nombre_archivo)
+                                print(lista_entrelazada)
                                 modificar_datos(lista_entrelazada, usuario_actual)
                             
                             case "5":
