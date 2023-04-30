@@ -113,56 +113,59 @@ class administrador(Usuario):
         return super().__str__() + f", Ventas: {self.ventas}"
 
 class Vehiculo:
-    def __init__(self, modelo, marca, precio,  autonomia, uso):
+    def __init__(self, modelo, marca, precio,  autonomia, uso, id):
         self.modelo = modelo
         self.marca = marca
         self.precio = precio
         self.autonomia = autonomia
         self.uso = uso
+        self.id = id
     def __str__(self):
         return f"Marca: {self.marca}, Modelo: {self.modelo}, Precio: {self.precio},Autonomia: {self.autonomia}, Uso: {self.uso}"
 
 class Utilitario(Vehiculo):
-    def __init__(self, marca, modelo, precio, autonomia, uso, carga_maxima):
-        super().__init__(modelo, marca, precio,autonomia, uso)
+    def __init__(self, marca, modelo, precio, autonomia, uso, carga_maxima, id):
+        super().__init__(modelo, marca, precio,autonomia, uso, id)
         self.carga_maxima = carga_maxima
     def __str__(self):
-        return super().__str__() + f", Carga máxima: {self.carga_maxima}"
+        return super().__str__() + f", Carga máxima: {self.carga_maxima}, ID: {self.id}"
         
 class Deportivo(Vehiculo):
-    def __init__(self, marca, modelo, precio, autonomia, uso, velocidad_maxima):
-        super().__init__(modelo, marca, precio,autonomia, uso)
+    def __init__(self, marca, modelo, precio, autonomia, uso, velocidad_maxima, id):
+        super().__init__(modelo, marca, precio,autonomia, uso, id)
         self.velocidad_maxima = velocidad_maxima
     def __str__(self):
-        return super().__str__() + f", Velocidad máxima: {self.velocidad_maxima}"
+        return super().__str__() + f", Velocidad máxima: {self.velocidad_maxima}, ID: {self.id}"
         
 class Electrico(Vehiculo):
-    def __init__(self, marca, modelo, precio,autonomia, uso, tiempo_carga):
-        super().__init__(modelo, marca, precio,autonomia, uso)
+    def __init__(self, marca, modelo, precio,autonomia, uso, tiempo_carga, id):
+        super().__init__(modelo, marca, precio,autonomia, uso,  id)
         self.tiempo_carga = tiempo_carga
     def __str__(self):
-        return super().__str__() + f", Tiempo de carga: {self.tiempo_carga}"
+        return super().__str__() + f", Tiempo de carga: {self.tiempo_carga}, ID: {self.id}"
         
 class Van(Vehiculo):
-    def __init__(self, marca, modelo, precio,autonomia, uso, asientos):
-        super().__init__(modelo, marca, precio, autonomia, uso)
+    def __init__(self, marca, modelo, precio,autonomia, uso, asientos, id):
+        super().__init__(modelo, marca, precio, autonomia, uso, id)
         self.asientos = asientos
 
     def __str__(self):
-        return super().__str__() + f", Asientos: {self.asientos}"
+        return super().__str__() + f", Asientos: {self.asientos}, ID: {self.id}"
         
 class Compacto(Vehiculo):
-    def __init__(self, marca, modelo, precio, autonomia, uso,tamaño_baul):
-        super().__init__(modelo, marca, precio,autonomia, uso)
+    def __init__(self, marca, modelo, precio, autonomia, uso,tamaño_baul, id):
+        super().__init__(modelo, marca, precio,autonomia, uso, id)
         self.tamaño_baul = tamaño_baul
     def __str__(self):
-        return super().__str__() + f", Tamaño del baul: {self.tamaño_baul}"
+        return super().__str__() + f", Tamaño del baul: {self.tamaño_baul}, ID: {self.id}"
     
 
 class Nodo:
     def __init__(self, vehiculo):
         self.vehiculo = vehiculo
         self.siguiente = None
+
+        
 
 class Stock(Nodo):
     def __init__(self):
@@ -179,20 +182,26 @@ class Stock(Nodo):
                 actual = actual.siguiente
             actual.siguiente = nuevo_nodo
     
-    def eliminar(self, vehiculo, marca, modelo):
+    def eliminar(self, id):
         
         if self.cabeza is None:
+            print("verga")
             return
-        if self.cabeza.vehiculo.marca == marca and self.cabeza.vehiculo.modelo == modelo:
+        if self.cabeza.vehiculo.id == id:
             self.cabeza = self.cabeza.siguiente
-            del vehiculo
+            
         else:
             actual = self.cabeza
             while actual.siguiente is not None:
-                if actual.siguiente.vehiculo == vehiculo:
-                    actual.siguiente = actual.siguiente.siguiente
-                    del vehiculo
-                    return
+                print("vamos bien")
+                print(id)
+                print(actual.vehiculo.id)
+                if actual.vehiculo.id == id:
+                    print("vamos mejor")
+                    
+                    actual = actual.siguiente
+                    print(f"El Vehiculo {self.vehiculo.marca} {self.vehiculo.modelo} ha sido eliminado con éxito")
+                    return self
                 actual = actual.siguiente
     
     def __str__(self):
@@ -212,3 +221,8 @@ class Stock(Nodo):
             lista.append(nodo.vehiculo)
             nodo = nodo.siguiente
         return lista
+    def ultimo_nodo(self):
+        while self.cabeza.siguiente is not None:
+            self.cabeza = self.cabeza.siguiente
+        return self.cabeza
+

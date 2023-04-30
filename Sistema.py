@@ -4,7 +4,6 @@ from Clases import *
 registro = RegistroUsuarios()
 login = Login(registro)
 usuario_actual = None
-
 while True:
     print("1. Registro")
     print("2. Inicio de sesión")
@@ -54,10 +53,17 @@ while True:
                         n = False
                 else:
                     print("Email o contraseña incorrectos.")
-                    email = input("Ingrese su email: ")
-                    email=email.lower()
-                    password = input("Ingrese su contraseña: ")
-                    n = True
+                    salir = input("¿Desea salir del programa? (s/n): ")
+                    salir = salir.lower()
+                    if salir == "s":
+                        exit()
+                        
+                    else:
+                        email = input("Ingrese su email: ")
+                        email=email.lower()
+                        password = input("Ingrese su contraseña: ")
+                        n = True
+                    
             s = True
             while s == True:
                 if usuario_actual is not None:
@@ -70,7 +76,7 @@ while True:
                         print('6. cerrar sesion')
                         opcion = input("Ingrese una opción (el numero): ")
                         match opcion:
-                            # Funciona, me gustaria agregar un id para cada vehiculo facilitaria mucho la busqueda
+                            # Funciona
                             case "1":
                                 nombre_archivo = "stock.txt"
                                 lista_entrelazada = descargar_stock(nombre_archivo)
@@ -83,23 +89,28 @@ while True:
                                     else:
                                         n=False
                                 guardar_stock(nombre_archivo, lista_entrelazada)
-                            # seguir trabajando en esta opcion  
+                            # funciona
                             case "2":
                                 nombre_archivo = "stock.txt"
                                 lista_entrelazada = descargar_stock(nombre_archivo)
-                                lista_entrelazada.eliminar()
+                                print(lista_entrelazada)
+                                id = input("Ingrese el id del vehiculo a eliminar: ")
+                                lista_entrelazada.eliminar(id)
+                                print("-------------------------------- Stock actualizado --------------------------------")
+                                print(lista_entrelazada)
                                 guardar_stock(nombre_archivo, lista_entrelazada)
-                            # seguir trabajando en esta opcion
+                            # Funciona
                             case "3":
                                 nombre_archivo = "stock.txt"
                                 lista_entrelazada = descargar_stock(nombre_archivo)
-                                modificar_vehiculo(lista_entrelazada)
-                            # funciona
+                                modificar_dato_vehiculo(lista_entrelazada)
+                                guardar_stock(nombre_archivo, lista_entrelazada)
+                            # Funciona
                             case "4":
                                 nombre_archivo = "stock.txt"
                                 lista_entrelazada = descargar_stock(nombre_archivo)
                                 print(lista_entrelazada)
-                            # ver como implementar bien mathplotlib
+                            # Ver como implementar bien mathplotlib
                             case "5":
                                 nombre_archivo = "ventas.txt"
                                 lista_entrelazada = descargar_stock(nombre_archivo)
@@ -118,10 +129,10 @@ while True:
                         print('5. Cerrar sesion')
                         opcion = input("Ingrese una opción (el numero): ")
                         match opcion:
-                            # funciona
+                            # Funciona
                             case "1":
                                 nombre_archivo = "stock.txt"
-                                lista_entrelazada = descargar_stock(nombre_archivo)
+                                lista_entrelazada = descargar_stock_cliente(nombre_archivo)
                                 print(lista_entrelazada)
                             # funciona?
                             case "2":
@@ -136,19 +147,23 @@ while True:
                                     print(i)
                                     if i[0] == usuario_actual.email:
                                         print(i)
-                            
+                            # casiquesi
                             case "4":
                                 print(usuario_actual)
                                 nombre_archivo = "usuarios.txt"
                                 lista_entrelazada = descargar_stock(nombre_archivo)
                                 modificar_datos(lista_entrelazada, usuario_actual)
                             
-
-
-                            
+                            case "5":
+                                print("Gracias por usar el sistema.")
+                                s = False
+                            case _:
+                                print("Opción inválida.")
+                                                        
         case "3":
             print("Gracias por usar el sistema.")
-            break
+            exit()
         case _:
             print("Opción inválida.")
+
 
