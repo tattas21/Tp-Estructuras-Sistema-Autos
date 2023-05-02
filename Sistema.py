@@ -1,5 +1,6 @@
 from Biblioteca import *
 from Clases import *
+from getpass import *
 
 registro = RegistroUsuarios()
 login = Login(registro)
@@ -16,17 +17,26 @@ while True:
             while validar_nombre(nombre) == False:
                 print("Nombre no válido.")
                 nombre = input("Ingrese su nombre: ")
+            dni = input("Ingrese su DNI: ")
+            d = None
+            while validar_dni(dni) == False or registro.buscar_usuario(d,dni) == False:
+                print("DNI no válido.")
+                dni = input("Ingrese su DNI: ")
+            em = None
             email = (input("Ingrese su email: "))
-            while not validar_email(email) or registro.buscar_usuario(email) == False:
+            while  validar_email(email) == False or registro.buscar_usuario(email,em) == False:
                 print("Email no válido.")
                 email = input("Ingrese su email: ")
             email=email.lower()
-            password = input("Ingrese su contraseña: ")
-            while not validar_password(password):
+            # Agregue el getpass, simplemente por estetica, busque en internet alguna forma de ocultar la contraseña y me aparecio esto.
+            password = getpass("Ingrese su contraseña: ")
+            password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
+            while not validar_password(password) or password != password_verificacion:
                 print("Contraseña no válida.")
-                password = input("Ingrese su contraseña: ")
+                password = getpass("Ingrese su contraseña: ")
+                password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
             codigoadmin=input("Ingrese el codigo de administrador: ")
-            usuario = Usuario(nombre, email, password)
+            usuario = Usuario(nombre, dni,email, password)
             registro.registrar_usuario(usuario)
             if validar_email(email) == 'sistema.com.ar' and codigoadmin == '1234':
                 print('Bienvenido administrador')
@@ -37,18 +47,22 @@ while True:
         case "2":
             email = input("Ingrese su email: ")
             email=email.lower()
-            password = input("Ingrese su contraseña: ")
+            p = input("Desea ver la contraseña que ingresaste? (s)")
+            match p:
+                case "s":
+                    password = input("Ingrese su contraseña: ")
+                case _:
+                    password = getpass("Ingrese su contraseña: ")
+            
             es_admin=False
             n = True
             while n == True:
                 if login.iniciar_sesion(email, password):
                     if validar_email(email)=='sistema.com.ar':
                         es_admin=True
-                        print(f"Bienvenido {login.usuario_actual.nombre}")
                         usuario_actual = login.usuario_actual
                         n = False
                     else:
-                        print(f"Bienvenido {login.usuario_actual.nombre}")
                         usuario_actual = login.usuario_actual
                         n = False
                 else:
@@ -61,9 +75,14 @@ while True:
                     else:
                         email = input("Ingrese su email: ")
                         email=email.lower()
-                        password = input("Ingrese su contraseña: ")
+                        p = input("Desea ver la contraseña que ingresaste? (s)")
+                        match p:
+                            case "s":
+                                password = input("Ingrese su contraseña: ")
+                            case _:
+                                password = getpass("Ingrese su contraseña: ")
                         n = True
-                    
+            print(f'Bienvenido {usuario_actual.nombre}')      
             s = True
             while s == True:
                 if usuario_actual is not None:
@@ -80,11 +99,13 @@ while True:
                             case "1":
                                 nombre_archivo = "stock.txt"
                                 lista_entrelazada = descargar_stock(nombre_archivo)
+                                i = numero_id()
                                 n=True
                                 while n==True:
-                                    agregar_vehiculo_tipo(n, lista_entrelazada)
+                                    agregar_vehiculo_tipo(n, lista_entrelazada, str(i))
 
                                     if input("¿Desea agregar otro vehículo? (s/n): ") == "s":
+                                        i = int(i) + 1
                                         n=True
                                     else:
                                         n=False
@@ -95,10 +116,15 @@ while True:
                                 lista_entrelazada = descargar_stock(nombre_archivo)
                                 print(lista_entrelazada)
                                 id = input("Ingrese el id del vehiculo a eliminar: ")
-                                lista_entrelazada.eliminar(id)
+                                actual = lista_entrelazada.cabeza 
+                                while actual is not None:
+                                    if actual.vehiculo.id == id:
+                                        lista_entrelazada.eliminar(id)
+                                        guardar_stock(nombre_archivo, lista_entrelazada)
+                                        break
+                                    actual = actual.siguiente
                                 print("-------------------------------- Stock actualizado --------------------------------")
                                 print(lista_entrelazada)
-                                guardar_stock(nombre_archivo, lista_entrelazada)
                             # Funciona
                             case "3":
                                 nombre_archivo = "stock.txt"
@@ -122,7 +148,6 @@ while True:
                             case _:
                                 print("Opción inválida.")
                     else:
-                        print(f'Bienvenido {usuario_actual.nombre}')
                         print('1. Ver stock')
                         print('2. Comprar vehiculo')
                         print('3. Ver mis compras')
@@ -147,17 +172,16 @@ while True:
                             # casiquesi
                             case "4":
                                 nombre_archivo = "usuarios.txt"
-                                lista_entrelazada = ListaEnlazada()
+                                lista_entrelazada = []
                                 try:
                                     with open(nombre_archivo, "r") as archivo:
                                         lineas = archivo.readlines()
                                         for linea in lineas:
                                             campos = linea.strip().split(",")
-                                            lista_entrelazada.agregar(campos)
+                                            lista_entrelazada.append(campos)
                                     archivo.close()
                                 except FileNotFoundError:
                                     print("No se encontró el archivo.")
-                                lista_entrelazada = lista_entrelazada.list()
                                 print("1. Modificar nombre")
                                 print("2. Modificar contraseña")
                                 opcion = input("Ingrese una opción (el numero): ")
@@ -165,21 +189,23 @@ while True:
                                     case "1":
                                         nombre = input("Ingrese nueva nombre: ")
                                         for i in range(len(lista_entrelazada)):
-                                            if lista_entrelazada[i][1] == usuario_actual.email:
+                                            if lista_entrelazada[i][2] == usuario_actual.email:
                                                 lista_entrelazada[i][0] = nombre
                                     case "2":
-                                        password = input("Ingrese su nueva contraseña: ")
-                                        while not validar_password(password):
+                                        password = getpass("Ingrese su contraseña: ")
+                                        password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
+                                        while not validar_password(password) or password != password_verificacion:
                                             print("Contraseña no válida.")
-                                            password = input("Ingrese su contraseña: ")
+                                            password = getpass("Ingrese su contraseña: ")
+                                            password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
                                         for i in range(len(lista_entrelazada)):
-                                            if lista_entrelazada[i][1] == usuario_actual.email:
-                                                lista_entrelazada[i][2] = password
+                                            if lista_entrelazada[i][2] == usuario_actual.email:
+                                                lista_entrelazada[i][3] = password
                                     case _:
                                         print("Opción inválida.")
                                 with open(nombre_archivo, "w") as archivo:
                                     for i in range(len(lista_entrelazada)): 
-                                        archivo.write(f"{lista_entrelazada[i][0]},{lista_entrelazada[i][1]},{lista_entrelazada[i][2]}\n")
+                                        archivo.write(f"{lista_entrelazada[i][0]},{lista_entrelazada[i][1]},{lista_entrelazada[i][2]},{lista_entrelazada[i][3]}\n")
                                 archivo.close()
 
 

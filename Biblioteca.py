@@ -14,7 +14,12 @@ def lista_a_lista_listaentrelazada(lista, Nodo):
         current = current.next
     return head
 
-
+def validar_dni(dni):
+    if 8 < len(dni)  or  len(dni )< 7 :
+        return False
+    if not dni.isdigit():
+        return False
+    return True
 
 def validar_email(email):
     partes = email.split('@')
@@ -60,7 +65,7 @@ def descargar_stock(nombre_archivo):
                     vehiculo = Utilitario(campos[1], campos[2], int(campos[3]), int(campos[4]), (campos[5]), int(campos[6]), (campos[7]))
                 elif campos[0] == "deportivo":
                     vehiculo = Deportivo(campos[1], campos[2], int(campos[3]), int(campos[4]), (campos[5]), int(campos[6]), (campos[7]))
-                elif campos[0] == "elictrico":
+                elif campos[0] == "electrico":
                     vehiculo = Electrico(campos[1], campos[2], int(campos[3]), int(campos[4]), (campos[5]), int(campos[6]), (campos[7]))
                 elif campos[0] == "van":
                     vehiculo = Van(campos[1], campos[2], int(campos[3]), int(campos[4]), (campos[5]), int(campos[6]), (campos[7]))
@@ -88,28 +93,35 @@ def guardar_stock(nombre_archivo, lista_entrelazada):
                     tipo = "deportivo"
                     datos = f"{actual.vehiculo.marca},{actual.vehiculo.modelo},{actual.vehiculo.precio},{actual.vehiculo.autonomia},{actual.vehiculo.uso},{actual.vehiculo.velocidad_maxima},{actual.vehiculo.id}\n"
                 elif isinstance(actual.vehiculo, Electrico):
-                    tipo = "elictrico"
+                    tipo = "electrico"
                     datos = f"{actual.vehiculo.marca},{actual.vehiculo.modelo},{actual.vehiculo.precio},{actual.vehiculo.autonomia},{actual.vehiculo.uso},{actual.vehiculo.tiempo_carga},{actual.vehiculo.id}\n"
                 elif isinstance(actual.vehiculo, Van):
                     tipo = "van"
                     datos = f"{actual.vehiculo.marca},{actual.vehiculo.modelo},{actual.vehiculo.precio},{actual.vehiculo.autonomia},{actual.vehiculo.uso}, {actual.vehiculo.asientos},{actual.vehiculo.id}\n"
                 elif isinstance(actual.vehiculo, Compacto):
-                    tipo = "Compacto"
+                    tipo = "compacto"
                     datos = f"{actual.vehiculo.marca},{actual.vehiculo.modelo},{actual.vehiculo.precio},{actual.vehiculo.autonomia},{actual.vehiculo.uso},{actual.vehiculo.tamaño_baul},{actual.vehiculo.id}\n"
                 archivo.write(f"{tipo},{datos}")
                 actual = actual.siguiente
     archivo.close()
     print(f"Stock guardado en el archivo {nombre_archivo}")
+def numero_id():
+    try:
+        i = descargar_stock("stock.txt")
+        i = i.ultimo_nodo().vehiculo.id
+        i = i.split("_")[1]
+        i=int(i) + 1
+        i = str(i)
+    except AttributeError:
+        i = 0
+        i = str(i)
+    return i
 
-def agregar_vehiculo_tipo(n, lista_entrelazada):
-        try:
-            i = lista_entrelazada.ultimo_nodo().vehiculo.id
-            i = i.split("_")[1]
-            i=int(i) + 1
-            i = str(i)
-        except AttributeError:
-            i = 0
-            i = str(i)
+
+
+def agregar_vehiculo_tipo(n, lista_entrelazada,i):
+    l = True
+    while l:
         tipo= input("Ingrese el tipo de vehículo que desea agregar: ")
         tipo=tipo.lower()
         match tipo:
@@ -160,8 +172,6 @@ def agregar_vehiculo_tipo(n, lista_entrelazada):
                 return n
             case _:
                 print("Tipo de vehículo no válido")
-                n=True
-                return n
 
 def eliminar_vehiculo(lista_entrelazada):
     lista=lista_entrelazada.list()
@@ -226,24 +236,26 @@ def modificar_dato_vehiculo(lista_entrelazada):
                             m=True
                     print(f"Se modificó el vehículo {str(i)}")
             else:
-                print("Vehículo no encontrado")
                 n=True
-
+        return lista
 def buscar_vehiculo(lista_vehiculos, marca=None, modelo=None, precio=None, autonomia=None, uso=None):
     lista_vehiculos = lista_vehiculos.list()
     n = False
     while n==False:
-        print("Filtros disponibles: marca\n modelo\n precio\n autonomia\n uso\n nota: si no desea utilizar un filtro, ingrese 'no'")
+        print("Filtros disponibles:\n marca\n modelo\n precio\n autonomia\n uso\n nota: si no desea utilizar un filtro, ingrese 'no'")
         filtro=input("Ingrese el filtro que desea utilizar: ")
         
         filtro=filtro.lower()
         match filtro:
             case "marca":
                 marca=input("Ingrese la marca que desea buscar: ")
+                marca = marca.lower()
             case "modelo":
                 modelo=input("Ingrese el modelo que desea buscar: ")
+                modelo = modelo.lower()
             case "uso":
                 uso=input("Ingrese el uso que desea buscar: ")
+                uso = uso.lower()
             case "precio":
                 precio=int(input("Ingrese el precio que desea buscar: "))
             case "autonomia":
@@ -251,29 +263,30 @@ def buscar_vehiculo(lista_vehiculos, marca=None, modelo=None, precio=None, auton
             case "no":
                 n=True
             case _:
-                print("Filtro no válido")    
-        for vehiculo in lista_vehiculos:
-            if marca is not None and vehiculo.marca != marca:
-                lista_vehiculos.remove(vehiculo)
-            if modelo is not None and vehiculo.modelo != modelo:
-                lista_vehiculos.remove(vehiculo)
-            if precio is not None and vehiculo.precio > precio:
-                lista_vehiculos.remove(vehiculo)
-            if autonomia is not None and vehiculo.autonomia < autonomia:
-                lista_vehiculos.remove(vehiculo)
-            if uso is not None and vehiculo.uso != uso:
-                lista_vehiculos.remove(vehiculo)
-            
+                print("Filtro no válido")               
         m=(input("Desea agregar otro filtro? (s/n): "))
         m=m.lower()
         if m=="s":
             n=False
         else: 
             n=True
-    print("Vehículos encontrados:")
+    lista_v_filtrado = []
     for vehiculo in lista_vehiculos:
+            if marca is not None and vehiculo.marca != marca:
+                continue   
+            if modelo is not None and vehiculo.modelo != modelo:
+                continue
+            if precio is not None and int(vehiculo.precio) > precio:
+                continue  
+            if autonomia is not None and int(vehiculo.autonomia) < autonomia:
+                continue
+            if uso is not None and vehiculo.uso != uso:
+                continue
+            lista_v_filtrado.append(vehiculo)
+    print("Vehículos encontrados:")
+    for vehiculo in lista_v_filtrado:
         print(vehiculo)
-    return (lista_vehiculos)
+    return (lista_v_filtrado)
 
 def comprar_vehiculo(vehiculos_filtrados, lista, usuario):
     n=False
@@ -304,7 +317,6 @@ def comprar_vehiculo(vehiculos_filtrados, lista, usuario):
                     if confirmacion == "s":
                         print("Compra realizada con éxito")
                         m = True
-                        listaventas = [usuario.email, fecha_hora]
                         continue
                     elif confirmacion == "n":
                         print("Compra cancelada")
@@ -366,7 +378,6 @@ def modificar_datos(lista, usuario):
         dato=dato.lower()
         match dato:
             case "nombre":
-                
                 usuario.nombre=input("Ingrese el nuevo nombre: ")
                 n=True
             case "email":

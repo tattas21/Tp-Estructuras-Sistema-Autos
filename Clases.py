@@ -1,30 +1,20 @@
 #Clases Usuarios
 # clase usuario general de esta se hereda administrador y cliente
 class Usuario:
-    def __init__(self, nombre, email, password):
+    def __init__(self, nombre, dni,email, password):
         self.nombre = nombre
+        self.dni = dni
         self.email = email
         self.password = password
 
-    def __str__(self):
-        return f"{self.nombre} ({self.email})"
-
-class cliente(Usuario):
-    def __init__(self,nombre,email,password):
-        super().__init__(nombre,email,password)
-        self.compras=[]
-    def registro_compras(self):
-        self.compras.append(self.compras)
-        with open(f'{self.email}.txt', 'a') as f:
-            f.write(f'{self.tipo},{self.marca},{self.modelo},{self.precio}\n')
-        f.close()
 
     def __str__(self):
-        return super().__str__() + f", Compras: {self.compras}"
+        return f"{self.nombre} {self.dni} {self.email}"
+
 
 class administrador(Usuario):
-    def __init__(self,nombre,email,password, es_admin):
-        super().__init__(nombre,email,password)
+    def __init__(self,nombre,dni,email,password, es_admin):
+        super().__init__(nombre,dni,email,password)
         self.es_admin = None
     def es_administrador(self):
         if self.email == 'sistema.com.ar':
@@ -33,8 +23,7 @@ class administrador(Usuario):
         else:
             self.es_admin = False
             return self.es_admin 
-    def __str__(self):
-        return super().__str__() + f", Ventas: {self.ventas}"
+    
 
 
 class RegistroUsuarios:
@@ -50,22 +39,22 @@ class RegistroUsuarios:
     def guardar_usuarios(self):
         with open(self.archivo, "w") as f:
             for usuario in self.usuarios:
-                f.write(f"{usuario.nombre},{usuario.email},{usuario.password}\n")
+                f.write(f"{usuario.nombre},{usuario.dni},{usuario.email},{usuario.password}\n")
         f.close()
 
     def cargar_usuarios(self):
         try:
             with open(self.archivo, "r") as f:
                 for linea in f:
-                    nombre, email, password = linea.strip().split(",")
-                    self.usuarios.append(Usuario(nombre, email, password))
+                    nombre, dni, email, password = linea.strip().split(",")
+                    self.usuarios.append(Usuario(nombre,dni,email,password))
             f.close()
         except FileNotFoundError:
             pass
-    def buscar_usuario(self, email):
+    def buscar_usuario(self, email, dni):
         for usuario in self.usuarios:
-            if usuario.email == email:
-                print(f"El usuario {usuario.email} ya existe")
+            if usuario.email == email or usuario.dni == dni:
+                print(f"El usuario ya existe")
                 return False
         return None
 # Ver opcion sin clase
@@ -83,37 +72,6 @@ class Login:
 
     def cerrar_sesion(self):
         self.usuario_actual = None
-
-class cliente(Usuario):
-    def __init__(self,nombre,email,password):
-        super().__init__(nombre,email,password)
-        self.compras=[self.email]
-    def agregar_compra(self,compra):
-        self.compras.append(compra)
-    def guardar_compras(self):
-        with open("compras.txt", "w") as f:
-            for compra in self.compras:
-                f.write(f"{compra}\n")
-        f.close()
-    def descargar_compras(self):
-        try:
-            with open("compras.txt", "r") as f:
-                for linea in f:
-                    self.compras.append(linea.strip())
-            f.close()
-        except FileNotFoundError:
-            pass
-    def __str__(self):
-        return super().__str__() + f", Compras: {self.compras}"
-
-class administrador(Usuario):
-    def __init__(self,nombre,email,password):
-        super().__init__(nombre,email,password)
-    
-
-
-    def __str__(self):
-        return super().__str__() + f", Ventas: {self.ventas}"
 
 class Vehiculo:
     def __init__(self, modelo, marca, precio,  autonomia, uso, id):
@@ -164,46 +122,45 @@ class Compacto(Vehiculo):
     
 
 class Nodo:
-    def __init__(self, vehiculo):
+    def __init__(self, vehiculo, siguiente = None):
         self.vehiculo = vehiculo
-        self.siguiente = None
+        self.siguiente = siguiente
 
         
 
 class ListaEnlazada:
     def __init__(self):
         self.cabeza = None
-
     
     def agregar(self, vehiculo):
         nuevo_nodo = Nodo(vehiculo)
-        if self.cabeza is None:
+        if not self.cabeza:
             self.cabeza = nuevo_nodo
+            return
         else:
             actual = self.cabeza
             while actual.siguiente is not None:
                 actual = actual.siguiente
             actual.siguiente = nuevo_nodo
-    
+            return
+        
     def eliminar(self, id):
         
         if self.cabeza is None:
-            print("verga")
             return
         if self.cabeza.vehiculo.id == id:
             self.cabeza = self.cabeza.siguiente
             
         else:
             actual = self.cabeza
-            while actual.siguiente is not None:
-                print("vamos bien")
-                print(id)
-                print(actual.vehiculo.id)
+            while actual is not None:
                 if actual.vehiculo.id == id:
-                    print("vamos mejor")
-                    
-                    actual = actual.siguiente
-                    print(f"El Vehiculo {self.vehiculo.marca} {self.vehiculo.modelo} ha sido eliminado con éxito")
+                    if actual.siguiente is None:
+                        print(actual.vehiculo)
+                        del actual
+                        print(actual)
+                    else:
+                        actual = actual.siguiente
                     return self
                 actual = actual.siguiente
     
