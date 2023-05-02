@@ -122,6 +122,7 @@ while True:
                             case _:
                                 print("Opción inválida.")
                     else:
+                        print(f'Bienvenido {usuario_actual.nombre}')
                         print('1. Ver stock')
                         print('2. Comprar vehiculo')
                         print('3. Ver mis compras')
@@ -145,20 +146,44 @@ while True:
                                 lista = descargar_lista_ventas(nombre_archivo, usuario_actual)
                             # casiquesi
                             case "4":
-                                print(usuario_actual)
+                                nombre_archivo = "usuarios.txt"
+                                lista_entrelazada = ListaEnlazada()
+                                try:
+                                    with open(nombre_archivo, "r") as archivo:
+                                        lineas = archivo.readlines()
+                                        for linea in lineas:
+                                            campos = linea.strip().split(",")
+                                            lista_entrelazada.agregar(campos)
+                                    archivo.close()
+                                except FileNotFoundError:
+                                    print("No se encontró el archivo.")
+                                lista_entrelazada = lista_entrelazada.list()
                                 print("1. Modificar nombre")
                                 print("2. Modificar contraseña")
                                 opcion = input("Ingrese una opción (el numero): ")
                                 match opcion:
                                     case "1":
                                         nombre = input("Ingrese nueva nombre: ")
-                                        usuario.nombre = nombre
+                                        for i in range(len(lista_entrelazada)):
+                                            if lista_entrelazada[i][1] == usuario_actual.email:
+                                                lista_entrelazada[i][0] = nombre
                                     case "2":
-                                        contraseña = input("Ingrese nueva contraseña: ")
-                                        usuario.password = contraseña
-                                lista_entrelazada = descargar_stock(nombre_archivo)
-                                print(lista_entrelazada)
-                                modificar_datos(lista_entrelazada, usuario_actual)
+                                        password = input("Ingrese su nueva contraseña: ")
+                                        while not validar_password(password):
+                                            print("Contraseña no válida.")
+                                            password = input("Ingrese su contraseña: ")
+                                        for i in range(len(lista_entrelazada)):
+                                            if lista_entrelazada[i][1] == usuario_actual.email:
+                                                lista_entrelazada[i][2] = password
+                                    case _:
+                                        print("Opción inválida.")
+                                with open(nombre_archivo, "w") as archivo:
+                                    for i in range(len(lista_entrelazada)): 
+                                        archivo.write(f"{lista_entrelazada[i][0]},{lista_entrelazada[i][1]},{lista_entrelazada[i][2]}\n")
+                                archivo.close()
+
+
+
                             
                             case "5":
                                 print("Gracias por usar el sistema.")

@@ -17,6 +17,7 @@ class cliente(Usuario):
         self.compras.append(self.compras)
         with open(f'{self.email}.txt', 'a') as f:
             f.write(f'{self.tipo},{self.marca},{self.modelo},{self.precio}\n')
+        f.close()
 
     def __str__(self):
         return super().__str__() + f", Compras: {self.compras}"
@@ -50,6 +51,7 @@ class RegistroUsuarios:
         with open(self.archivo, "w") as f:
             for usuario in self.usuarios:
                 f.write(f"{usuario.nombre},{usuario.email},{usuario.password}\n")
+        f.close()
 
     def cargar_usuarios(self):
         try:
@@ -57,6 +59,7 @@ class RegistroUsuarios:
                 for linea in f:
                     nombre, email, password = linea.strip().split(",")
                     self.usuarios.append(Usuario(nombre, email, password))
+            f.close()
         except FileNotFoundError:
             pass
     def buscar_usuario(self, email):
@@ -97,7 +100,7 @@ class cliente(Usuario):
             with open("compras.txt", "r") as f:
                 for linea in f:
                     self.compras.append(linea.strip())
-                f.close()
+            f.close()
         except FileNotFoundError:
             pass
     def __str__(self):
@@ -167,7 +170,7 @@ class Nodo:
 
         
 
-class Stock(Nodo):
+class ListaEnlazada:
     def __init__(self):
         self.cabeza = None
 

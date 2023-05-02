@@ -1,6 +1,8 @@
 from Clases import *
 from datetime import *
 from random import *
+from matplotlib import pyplot as plt
+import numpy as np
 # validaciones
 def lista_a_lista_listaentrelazada(lista, Nodo):
     if not lista:
@@ -66,7 +68,7 @@ def descargar_stock(nombre_archivo):
                     vehiculo = Compacto(campos[1], campos[2], int(campos[3]), int(campos[4]), (campos[5]), int(campos[6]), (campos[7]))
 
                 lista_entrelazada.agregar(vehiculo)
-            archivo.close()
+        archivo.close()
 
     except FileNotFoundError:
         print("El archivo no existe")
@@ -276,7 +278,7 @@ def buscar_vehiculo(lista_vehiculos, marca=None, modelo=None, precio=None, auton
 def comprar_vehiculo(vehiculos_filtrados, lista, usuario):
     n=False
     archivo=open("ventas.txt", "a")
-    fecha_hora = datetime.now()
+    fecha_hora = datetime.now().date()
     while n==False:
         marca_vehiculo=input("Ingrese la marca del vehículo que desea comprar: ")
         modelo_vehiculo=input("Ingrese el modelo del vehículo que desea comprar: ")
@@ -322,7 +324,6 @@ def comprar_vehiculo(vehiculos_filtrados, lista, usuario):
                             lista.eliminar(id)
                             dato = f"{usuario.email},{fecha_hora},{vehiculo_comprado.marca},{vehiculo_comprado.modelo},{vehiculo_comprado.precio}\n"
                             archivo.write(f'{dato}')
-                            archivo.close()
                             break
                         actual = actual.siguiente
                     guardar_stock("stock.txt",lista)
@@ -331,11 +332,11 @@ def comprar_vehiculo(vehiculos_filtrados, lista, usuario):
             else:
                 print("Vehículo no encontrado")
                 n=True
-
+    archivo.close()
     return vehiculos_filtrados
 
 def descargar_lista_ventas(nombre_archivo, usuario_actual):
-    lista_entrelazada = Stock()
+    lista_entrelazada = ListaEnlazada()
     try:
         with open(nombre_archivo, "r") as archivo:
             lineas = archivo.readlines()
@@ -353,7 +354,7 @@ def descargar_lista_ventas(nombre_archivo, usuario_actual):
             print(f"El total gastado es de ${total}")
             print("Detalle de las compras:")
             print(lista_entrelazada)
-            archivo.close()
+        archivo.close()
     except:
         print("No ha realizado ninguna compra")
     
@@ -411,11 +412,18 @@ def descargar_stock_cliente(nombre_archivo):
                     vehiculo = Compacto(campos[1], campos[2], int(campos[3]), int(campos[4]), (campos[5]), int(campos[6]), None)
                 lista_entrelazada.agregar(vehiculo)
                 
-            archivo.close()
+        archivo.close()
 
     except FileNotFoundError:
         print("El archivo no existe")
     return lista_entrelazada
+
+def convertir_tupla_en_lista(tupla):
+    lista = []
+    for elemento in tupla:
+        lista.append(elemento)
+    return lista
+
 
 def descargar_lista_ventas_estadisticas(nombre_archivo):
     lista_entrelazada = ListaEnlazada()
@@ -425,15 +433,131 @@ def descargar_lista_ventas_estadisticas(nombre_archivo):
             compra = None
             recaudacion = 0
             contador = 0
+            contadormarca = 0
+            tupla_marca = ()
+            tupla_contador = ()
+            tupla_precio = ()
+            tupla_fecha = ()
+            
             for linea in lineas:
                 campos = linea.strip().split(",")
                 compra = (f"Mail: {campos[0]}, Fecha: {campos[1]}, Marca: {campos[2]}, Modelo: {campos[3]}, Precio: ${campos[4]}")
                 lista_entrelazada.agregar(compra)
                 recaudacion += int(campos[4])
                 contador += 1
-        print(f"Se han realizado {contador} venta/s")
-        print(f"La facturación total es de: ${recaudacion}")
-        print("Detalle de las ventas:")
-        print(lista_entrelazada)
-    except:
+                
+
+        archivo.close() 
+        l = True
+        while l == True:
+            print("opciones: ")
+            print("1. Cantidad de ventas por marca")
+            print("2. Recaudacion total por dia")
+            print("3. Recaudacion total")
+            print("4. Cantidad de autos vendidos")
+            print("5. Detalle de todas las ventas")
+            op = input("Ingrese la opcion que desea(numero): ")
+            match op:
+                case "1":
+
+                    lista_entrelazada1 = lista_entrelazada.list()
+                    for i in range(len(lista_entrelazada1)):
+                        marca = lista_entrelazada1[i]
+                        marca = marca.split(", ")[2]
+                        marca = marca.split("Marca: ")[1]
+                        contadormarca = 0
+                        for x in range(len(lista_entrelazada1)):
+                            marca2 = lista_entrelazada1 [x]
+                            marca2 = marca2.split(", ")[2]
+                            marca2 = marca2.split("Marca: ")[1]
+                            if marca2 == marca:
+                                contadormarca += 1
+                            
+                        if marca not in tupla_marca: 
+                            tupla_marca += tuple(marca.split())
+                            tupla_contador += tuple(str(contadormarca).split())
+                        if marca in tupla_marca:
+                            pass
+                        
+            # Pie chart, where the slices will be ordered and plotted counter-clockwise:
+                    
+                    labels = tupla_marca
+                    sizes = convertir_tupla_en_lista(tupla_contador)
+
+                    fig1, ax1 = plt.subplots()
+                    ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
+                    shadow=True, startangle=90)
+                    ax1.axis('equal')
+
+                    plt.show()
+                    inp = input("Desea ver otra estadistica(s/n): ")
+                    if inp == "s":
+                        l = True
+                    else:
+                        l = False
+                case "2":
+                    lista_entrelazada2 = lista_entrelazada.list()
+                    for i in range(len(lista_entrelazada2)):
+                        fecha = lista_entrelazada2 [i]
+                        fecha = fecha.split(", ")[1]
+                        fecha = fecha.split("Fecha: ")[1]
+                        contadorfac = 0
+                        for x in range(len(lista_entrelazada2)):
+                            fecha2 = lista_entrelazada2 [x]
+                            fecha2 = fecha2.split(", ")[1]
+                            fecha2 = fecha2.split("Fecha: ")[1]
+                            if fecha2 == fecha:
+                                precio = lista_entrelazada2 [x]
+                                precio = precio.split(", ")[4]
+                                precio = precio.split("Precio: ")[1]
+                                precio = precio.split("$")[1]
+                                contadorfac += int(precio)
+                        if fecha not in tupla_fecha: 
+                            tupla_fecha += tuple(fecha.split())
+                            tupla_precio += tuple(str(contadorfac).split())
+                        if fecha in tupla_fecha:
+                            pass
+                    
+                    fig, ax = plt.subplots()
+                    x = tupla_fecha
+                    counts = convertir_tupla_en_lista(tupla_precio)
+                    for i in range(len(counts)):
+                        counts[i] = int(counts[i])
+                    ax.bar(x, counts)
+                    ax.set_ylabel('Recaudación')
+                    ax.set_title('Recaudación Total por Día')          
+                    plt.show()
+                    inp = input("Desea ver otra estadistica(s/n): ")
+                    if inp == "s":
+                        l = True
+                    else:
+                        l = False
+                case "3":
+                        print(f"La facturación total es de: ${recaudacion}")
+                        inp = input("Desea ver otra estadistica(s/n): ")
+                        if inp == "s":
+                            l = True
+                        else:
+                            l = False
+                case "4":
+                    print(f"Se han realizado {contador} venta/s")
+                    inp = input("Desea ver otra estadistica(s/n): ")
+                    if inp == "s":
+                        l = True
+                    else:
+                        l = False
+                case "5":
+                    print("Detalle de las ventas:")
+                    lista_entrelazada4 = lista_entrelazada.list()
+                    for i in range(len(lista_entrelazada4)):
+                        print(lista_entrelazada4[i])
+                    inp = input("Desea ver otra estadistica(s/n): ")
+                    if inp == "s":
+                        l = True
+                    else:
+                        l = False
+                case _:
+                    print("Dato no válido")
+                    l = True
+    except FileNotFoundError:
         print("No ha realizado ninguna compra")
