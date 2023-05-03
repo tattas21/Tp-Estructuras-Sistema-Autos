@@ -12,4 +12,4 @@ van,volkswagen,taos,31000,730,urbano, 8,VOL-TA_16
 deportivo,subaru,wrx,43500,625,urbano,255,SUB-wr_17
 compacto,fiat,cronos,14500,580,urbano,3,FIA-CR_18
 van,bmw,x5,55000,600,urbano, 6,BMW-X5_19
-electrico,tesla,y,48000,320,urbano,12,TES-Y_20
+electrico,tesla,y,48500,320,urbano,12,TES-Y_20

@@ -51,7 +51,11 @@ def validar_password(password):
 def validar_nombre(nombre):
     if  any(c.isdigit() for c in nombre):
         return False
+    partes = nombre.split(" ")
+    if len(partes) < 2:
+        return False
     return True
+    
 
 def descargar_stock(nombre_archivo):
     lista_entrelazada = ListaEnlazada()
@@ -355,6 +359,9 @@ def descargar_lista_ventas(nombre_archivo, usuario_actual):
             compra = None
             contador = 0
             total = 0
+            contadormarca = 0
+            tupla_marca = ()
+            tupla_contador = ()
             for linea in lineas:
                 campos = linea.strip().split(",")
                 if campos[0] == usuario_actual.email:
@@ -362,12 +369,79 @@ def descargar_lista_ventas(nombre_archivo, usuario_actual):
                     contador += 1
                     total += int(campos[4])
                     lista_entrelazada.agregar(compra)   
-            print(f"Usted ha realizado {contador} compra/s")
-            print(f"El total gastado es de ${total}")
-            print("Detalle de las compras:")
-            print(lista_entrelazada)
-        archivo.close()
-    except:
+            archivo.close()
+            
+            l = True
+            while l == True:
+                print("Estadisticas Disponibles:")
+                print(f"1. Total Compras por Marca \n2. Cantidad de Compras Realizadas \n3. Total Gastado \n4. Detalle de Compras Realizadas \n5. Volver al menú principal")
+                opcion = input("Ingrese el número de la estadística que desea ver: ")
+                match opcion:    
+                    case "1":
+                        print("Total de compras por marca")
+                        lista_entrelazada1 = lista_entrelazada.list()
+                        for i in range(len(lista_entrelazada1)):
+                            marca = lista_entrelazada1[i]
+                            marca = marca.split(", ")[2]
+                            marca = marca.split("Marca: ")[1]
+                            contadormarca = 0
+                            for x in range(len(lista_entrelazada1)):
+                                marca2 = lista_entrelazada1 [x]
+                                marca2 = marca2.split(", ")[2]
+                                marca2 = marca2.split("Marca: ")[1]
+                                if marca2 == marca:
+                                    contadormarca += 1
+                                        
+                            if marca not in tupla_marca: 
+                                tupla_marca += tuple(marca.split())
+                                tupla_contador += tuple(str(contadormarca).split())
+                            if marca in tupla_marca:
+                                pass
+                                    
+                        
+                                
+                        labels = tupla_marca
+                        sizes = convertir_tupla_en_lista(tupla_contador)
+
+                        fig1, ax1 = plt.subplots()
+                        ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
+                        shadow=True, startangle=90)
+                        ax1.axis('equal')
+
+                        plt.show()
+                        inp = input("Desea ver otra estadistica(s/n): ")
+                        if inp == "s":
+                            l = True
+                        else:
+                            l = False
+                    case "2":
+                        print(f"Usted ha realizado {contador} compra/s")
+                        inp = input("Desea ver otra estadistica(s/n): ")
+                        if inp == "s":
+                            l = True
+                        else:
+                            l = False
+                    case "3":
+                        print(f"El total gastado es de ${total}")
+                        inp = input("Desea ver otra estadistica(s/n): ")
+                        if inp == "s":
+                            l = True
+                        else:
+                            l = False
+                    case "4":
+                        print("------------------------------Detalle de compras realizadas------------------------------")
+                        print(lista_entrelazada)
+                        inp = input("Desea ver otra estadistica(s/n): ")
+                        if inp == "s":
+                            l = True
+                        else:
+                            l = False
+                    case "5":
+                        l = False
+                    case _:
+                        print("Opción no válida")
+                        l = True
+    except FileNotFoundError:
         print("No ha realizado ninguna compra")
     
 def modificar_datos(lista, usuario):
@@ -490,7 +564,7 @@ def descargar_lista_ventas_estadisticas(nombre_archivo):
                         if marca in tupla_marca:
                             pass
                         
-            # Pie chart, where the slices will be ordered and plotted counter-clockwise:
+            
                     
                     labels = tupla_marca
                     sizes = convertir_tupla_en_lista(tupla_contador)

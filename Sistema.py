@@ -6,6 +6,7 @@ registro = RegistroUsuarios()
 login = Login(registro)
 usuario_actual = None
 while True:
+    print("Bienvenido")
     print("1. Registro")
     print("2. Inicio de sesión")
     print("3. Salir")
@@ -53,15 +54,21 @@ while True:
                     password = input("Ingrese su contraseña: ")
                 case _:
                     password = getpass("Ingrese su contraseña: ")
+            codigoadmin = input("Ingrese el codigo de administrador: ")
             
             es_admin=False
             n = True
             while n == True:
                 if login.iniciar_sesion(email, password):
                     if validar_email(email)=='sistema.com.ar':
+                        while codigoadmin != '1234':
+                            print("Codigo de administrador no válido.")
+                            codigoadmin = input("Ingrese el codigo de administrador: ")
+    
                         es_admin=True
                         usuario_actual = login.usuario_actual
                         n = False
+                        
                     else:
                         usuario_actual = login.usuario_actual
                         n = False
@@ -120,11 +127,10 @@ while True:
                                 while actual is not None:
                                     if actual.vehiculo.id == id:
                                         lista_entrelazada.eliminar(id)
+                                        print(f"El vehiculo {actual.vehiculo.marca} {actual.vehiculo.modelo} con ID: {actual.vehiculo.id} fue eliminado.")
                                         guardar_stock(nombre_archivo, lista_entrelazada)
                                         break
                                     actual = actual.siguiente
-                                print("-------------------------------- Stock actualizado --------------------------------")
-                                print(lista_entrelazada)
                             # Funciona
                             case "3":
                                 nombre_archivo = "stock.txt"
