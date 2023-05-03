@@ -143,24 +143,22 @@ class ListaEnlazada:
                 actual = actual.siguiente
             actual.siguiente = nuevo_nodo
             return
-        
+    
     def eliminar(self, id):
         
         if self.cabeza is None:
             return
-        if self.cabeza.vehiculo.id == id:
-            self.cabeza = self.cabeza.siguiente
-            
+        elif self.cabeza.vehiculo.id == id:
+            self.cabeza = self.cabeza.siguiente   
         else:
             actual = self.cabeza
             while actual is not None:
-                if actual.vehiculo.id == id:
-                    if actual.siguiente is None:
-                        print(actual.vehiculo)
-                        del actual
-                        print(actual)
+                if actual.siguiente.vehiculo.id == id:
+                    if actual.siguiente.siguiente == None:
+                        actual.siguiente = None
+                        return self
                     else:
-                        actual = actual.siguiente
+                        actual.siguiente = actual.siguiente.siguiente
                     return self
                 actual = actual.siguiente
     
