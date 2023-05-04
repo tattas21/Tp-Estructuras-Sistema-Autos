@@ -30,7 +30,7 @@ while True:
                 email = input("Ingrese su email: ")
             email=email.lower()
             # Agregue el getpass, simplemente por estetica, busque en internet alguna forma de ocultar la contraseña y me aparecio esto.
-            password = getpass("Ingrese su contraseña: ")
+            password = getpass("Ingrese su contraseña (Debe tener al menos 8 caracteres entre esos al menos una letra o numero): ")
             password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
             while not validar_password(password) or password != password_verificacion:
                 print("Contraseña no válida.")
@@ -64,7 +64,6 @@ while True:
                         while codigoadmin != '1234':
                             print("Codigo de administrador no válido.")
                             codigoadmin = input("Ingrese el codigo de administrador: ")
-    
                         es_admin=True
                         usuario_actual = login.usuario_actual
                         n = False

@@ -121,8 +121,6 @@ def numero_id():
         i = str(i)
     return i
 
-
-
 def agregar_vehiculo_tipo(n, lista_entrelazada,i):
     l = True
     while l:
@@ -130,8 +128,8 @@ def agregar_vehiculo_tipo(n, lista_entrelazada,i):
         tipo=tipo.lower()
         match tipo:
             case "utilitario":
-                marca= input("Ingrese la marca del vehículo: ")
-                modelo= input("Ingrese el modelo del vehículo: ")
+                marca = input("Ingrese la marca del vehículo: ")
+                modelo = input("Ingrese el modelo del vehículo: ")
                 id = marca[0:3].upper() + "-" +modelo[0:2].upper()+ "_" + i
                 nuevo_auto = Utilitario(marca.lower(), modelo.lower(), int(input("Ingrese el precio del vehículo: ")), int(input("Ingrese la autonomía del vehículo: ")), input("Ingrese el uso del vehículo: ").lower(),int(input("Ingrese la carga máxima del vehículo: ")), id)
                 n=False
@@ -139,8 +137,8 @@ def agregar_vehiculo_tipo(n, lista_entrelazada,i):
                 print(f"Se agregó el vehículo {str(nuevo_auto)} al stock")
                 return n
             case "deportivo":
-                marca= input("Ingrese la marca del vehículo: ")
-                modelo= input("Ingrese el modelo del vehículo: ")
+                marca = input("Ingrese la marca del vehículo: ")
+                modelo = input("Ingrese el modelo del vehículo: ")
                 id = marca[0:3].upper() + "-" +modelo[0:2].lower()+ "_" + i
                 nuevo_auto = Deportivo(marca.lower(), modelo.lower(), int(input("Ingrese el precio del vehículo: ")), int(input("Ingrese la autonomía del vehículo: ")), input("Ingrese el uso del vehículo: ").lower(), int(input("Ingrese la velocidad máxima del vehículo: ")), id)
                 n=False
@@ -148,8 +146,8 @@ def agregar_vehiculo_tipo(n, lista_entrelazada,i):
                 print(f"Se agregó el vehículo {str(nuevo_auto)} al stock")
                 return n
             case "electrico":
-                marca= input("Ingrese la marca del vehículo: ")
-                modelo= input("Ingrese el modelo del vehículo: ")
+                marca = input("Ingrese la marca del vehículo: ")
+                modelo = input("Ingrese el modelo del vehículo: ")
                 id = marca[0:3].upper() + "-" +modelo[0:2].upper()+ "_" + i
                 nuevo_auto = Electrico(marca.lower(), modelo.lower(), int(input("Ingrese el precio del vehículo: ")), int(input("Ingrese la autonomía del vehículo: ")), input("Ingrese el uso del vehículo: "), int(input("Ingrese el tiempo de carga del vehículo: ")), id)
                 n=False
@@ -157,8 +155,8 @@ def agregar_vehiculo_tipo(n, lista_entrelazada,i):
                 print(f"Se agregó el vehículo {str(nuevo_auto)} al stock")
                 return n
             case "van":
-                marca= input("Ingrese la marca del vehículo: ")
-                modelo= input("Ingrese el modelo del vehículo: ")
+                marca = input("Ingrese la marca del vehículo: ")
+                modelo = input("Ingrese el modelo del vehículo: ")
                 id = marca[0:3].upper() + "-" +modelo[0:2].upper()+ "_" + i
                 nuevo_auto = Van(marca.lower(), modelo.lower(), int(input("Ingrese el precio del vehículo: ")), int(input("Ingrese la autonomía del vehículo: ")), input("Ingrese el uso del vehículo: "), int(input("Ingrese la cantidad de asientos del vehículo: ")), id)
                 n=False
@@ -166,8 +164,8 @@ def agregar_vehiculo_tipo(n, lista_entrelazada,i):
                 print(f"Se agregó el vehículo {str(nuevo_auto)} al stock")
                 return n
             case "compacto":
-                marca= input("Ingrese la marca del vehículo: ")
-                modelo= input("Ingrese el modelo del vehículo: ")
+                marca = input("Ingrese la marca del vehículo: ")
+                modelo = input("Ingrese el modelo del vehículo: ")
                 id = marca[0:3].upper() + "-" +modelo[0:2].upper()+ "_" + i
                 nuevo_auto = Compacto(marca.lower(), modelo.lower(), int(input("Ingrese el precio del vehículo: ")), int(input("Ingrese la autonomía del vehículo: ")), input("Ingrese el uso del vehículo: "), int(input("Ingrese el tamaño del baul del vehículo: ")), id)
                 n=False
@@ -346,7 +344,6 @@ def comprar_vehiculo(vehiculos_filtrados, lista, usuario):
                     n=True
                     b=False
             else:
-                print("Vehículo no encontrado")
                 n=True
     archivo.close()
     return vehiculos_filtrados
@@ -541,6 +538,7 @@ def descargar_lista_ventas_estadisticas(nombre_archivo):
             print("3. Recaudacion total")
             print("4. Cantidad de autos vendidos")
             print("5. Detalle de todas las ventas")
+            print("6. Salir")
             op = input("Ingrese la opcion que desea(numero): ")
             match op:
                 case "1":
@@ -575,6 +573,7 @@ def descargar_lista_ventas_estadisticas(nombre_archivo):
                     ax1.axis('equal')
 
                     plt.show()
+
                     inp = input("Desea ver otra estadistica(s/n): ")
                     if inp == "s":
                         l = True
@@ -641,6 +640,8 @@ def descargar_lista_ventas_estadisticas(nombre_archivo):
                         l = True
                     else:
                         l = False
+                case "6":
+                    l = False
                 case _:
                     print("Dato no válido")
                     l = True
