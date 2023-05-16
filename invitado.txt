@@ -1,0 +1,7 @@
+tomas attas,44668578,tattas@itba.edu.ar,9
+lucas rodriguez,12341234,lrodriguez@gmail.com.ar,7
+lucas rodriguez,12341233,lrodriguez@gmail.com.ar,2
+lucas rodriguez,12341232,lrodriguez@gmail.com.ar,3
+lucas rodriguez,12341237,lrodriguez@gmail.com.ar,4
+lucas rodriguez,12341238,lrodriguez@gmail.com.ar,8
+tomas atta,44668577,tattas@itba.com.ar,10

@@ -241,6 +241,8 @@ def modificar_dato_vehiculo(lista_entrelazada):
                 n=True
         return lista
 def buscar_vehiculo(lista_vehiculos, marca=None, modelo=None, precio=None, autonomia=None, uso=None):
+    marca = ()
+    modelo = ()
     lista_vehiculos = lista_vehiculos.list()
     n = False
     while n==False:
@@ -250,11 +252,14 @@ def buscar_vehiculo(lista_vehiculos, marca=None, modelo=None, precio=None, auton
         filtro=filtro.lower()
         match filtro:
             case "marca":
-                marca=input("Ingrese la marca que desea buscar: ")
-                marca = marca.lower()
+                marca1=input("Ingrese la marca que desea buscar: ")
+                marca1 = marca1.lower()
+                marca += (marca1.split())
+
             case "modelo":
-                modelo=input("Ingrese el modelo que desea buscar: ")
-                modelo = modelo.lower()
+                modelo1=input("Ingrese el modelo que desea buscar: ")
+                modelo1 = modelo1.lower()
+                modelo += tuple(modelo1.split())
             case "uso":
                 uso=input("Ingrese el uso que desea buscar: ")
                 uso = uso.lower()
@@ -274,10 +279,12 @@ def buscar_vehiculo(lista_vehiculos, marca=None, modelo=None, precio=None, auton
             n=True
     lista_v_filtrado = []
     for vehiculo in lista_vehiculos:
-            if marca is not None and vehiculo.marca != marca:
-                continue   
-            if modelo is not None and vehiculo.modelo != modelo:
-                continue
+            for i in range(len(marca)):
+                if vehiculo.marca != marca[i]:
+                    continue   
+            for i in range(len(modelo)):
+                if vehiculo.modelo != modelo[i]:
+                    continue
             if precio is not None and int(vehiculo.precio) > precio:
                 continue  
             if autonomia is not None and int(vehiculo.autonomia) < autonomia:
@@ -289,7 +296,6 @@ def buscar_vehiculo(lista_vehiculos, marca=None, modelo=None, precio=None, auton
     for vehiculo in lista_v_filtrado:
         print(vehiculo)
     return (lista_v_filtrado)
-
 def comprar_vehiculo(vehiculos_filtrados, lista, usuario):
     n=False
     archivo=open("ventas.txt", "a")
@@ -336,7 +342,7 @@ def comprar_vehiculo(vehiculos_filtrados, lista, usuario):
                             vehiculo_comprado = actual.vehiculo
                             id = vehiculo_comprado.id
                             lista.eliminar(id)
-                            dato = f"{usuario.email},{fecha_hora},{vehiculo_comprado.marca},{vehiculo_comprado.modelo},{vehiculo_comprado.precio}\n"
+                            dato = f"{usuario.dni},{fecha_hora},{vehiculo_comprado.marca},{vehiculo_comprado.modelo},{vehiculo_comprado.precio}\n"
                             archivo.write(f'{dato}')
                             break
                         actual = actual.siguiente
@@ -357,12 +363,12 @@ def descargar_lista_ventas(nombre_archivo, usuario_actual):
             contador = 0
             total = 0
             contadormarca = 0
-            tupla_marca = ()
-            tupla_contador = ()
+            lista_marca = []
+            lista_contador = []
             for linea in lineas:
                 campos = linea.strip().split(",")
                 if campos[0] == usuario_actual.email:
-                    compra = (f"Mail: {campos[0]}, Fecha: {campos[1]}, Marca: {campos[2]}, Modelo: {campos[3]}, Precio: ${campos[4]}")
+                    compra = (f"DNI: {campos[0]}, Fecha: {campos[1]}, Marca: {campos[2]}, Modelo: {campos[3]}, Precio: ${campos[4]}")
                     contador += 1
                     total += int(campos[4])
                     lista_entrelazada.agregar(compra)   
@@ -389,16 +395,16 @@ def descargar_lista_ventas(nombre_archivo, usuario_actual):
                                 if marca2 == marca:
                                     contadormarca += 1
                                         
-                            if marca not in tupla_marca: 
-                                tupla_marca += tuple(marca.split())
-                                tupla_contador += tuple(str(contadormarca).split())
-                            if marca in tupla_marca:
+                            if marca not in lista_marca: 
+                                lista_marca.append(marca)
+                                lista_contador.append(contadormarca)
+                            if marca in lista_marca:
                                 pass
                                     
                         
                                 
-                        labels = tupla_marca
-                        sizes = convertir_tupla_en_lista(tupla_contador)
+                        labels = lista_marca
+                        sizes = convertir_tupla_en_lista(lista_contador)
 
                         fig1, ax1 = plt.subplots()
                         ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
@@ -516,14 +522,14 @@ def descargar_lista_ventas_estadisticas(nombre_archivo):
             recaudacion = 0
             contador = 0
             contadormarca = 0
-            tupla_marca = ()
-            tupla_contador = ()
-            tupla_precio = ()
-            tupla_fecha = ()
+            lista_marca = []
+            lista_contador = []
+            lista_precio = []
+            lista_fecha = []
             
             for linea in lineas:
                 campos = linea.strip().split(",")
-                compra = (f"Mail: {campos[0]}, Fecha: {campos[1]}, Marca: {campos[2]}, Modelo: {campos[3]}, Precio: ${campos[4]}")
+                compra = (f"DNI: {campos[0]}, Fecha: {campos[1]}, Marca: {campos[2]}, Modelo: {campos[3]}, Precio: ${campos[4]}")
                 lista_entrelazada.agregar(compra)
                 recaudacion += int(campos[4])
                 contador += 1
@@ -556,16 +562,16 @@ def descargar_lista_ventas_estadisticas(nombre_archivo):
                             if marca2 == marca:
                                 contadormarca += 1
                             
-                        if marca not in tupla_marca: 
-                            tupla_marca += tuple(marca.split())
-                            tupla_contador += tuple(str(contadormarca).split())
-                        if marca in tupla_marca:
+                        if marca not in lista_marca: 
+                            lista_marca.append(marca)
+                            lista_contador.append(contadormarca)
+                        if marca in lista_marca:
                             pass
                         
             
                     
-                    labels = tupla_marca
-                    sizes = convertir_tupla_en_lista(tupla_contador)
+                    labels = lista_marca
+                    sizes = lista_contador
 
                     fig1, ax1 = plt.subplots()
                     ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
@@ -596,15 +602,15 @@ def descargar_lista_ventas_estadisticas(nombre_archivo):
                                 precio = precio.split("Precio: ")[1]
                                 precio = precio.split("$")[1]
                                 contadorfac += int(precio)
-                        if fecha not in tupla_fecha: 
-                            tupla_fecha += tuple(fecha.split())
-                            tupla_precio += tuple(str(contadorfac).split())
-                        if fecha in tupla_fecha:
+                        if fecha not in lista_fecha: 
+                            lista_fecha += tuple(fecha.split())
+                            lista_precio += tuple(str(contadorfac).split())
+                        if fecha in lista_fecha:
                             pass
                     
                     fig, ax = plt.subplots()
-                    x = tupla_fecha
-                    counts = convertir_tupla_en_lista(tupla_precio)
+                    x = lista_fecha
+                    counts = convertir_tupla_en_lista(lista_precio)
                     for i in range(len(counts)):
                         counts[i] = int(counts[i])
                     ax.bar(x, counts)

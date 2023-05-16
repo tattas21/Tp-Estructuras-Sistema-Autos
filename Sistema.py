@@ -5,6 +5,8 @@ from getpass import *
 registro = RegistroUsuarios()
 login = Login(registro)
 usuario_actual = None
+registroINV = RegistroInvitados()
+logiINV = LoginInvitado(registroINV)
 while True:
     print("Bienvenido")
     print("1. Registro")
@@ -14,80 +16,134 @@ while True:
     match opcion:
         # Agregar validaciones
         case "1":
-            nombre = input("Ingrese su nombre: ")
-            while validar_nombre(nombre) == False:
-                print("Nombre no válido.")
-                nombre = input("Ingrese su nombre: ")
-            dni = input("Ingrese su DNI: ")
-            d = None
-            while validar_dni(dni) == False or registro.buscar_usuario(d,dni) == False:
-                print("DNI no válido.")
-                dni = input("Ingrese su DNI: ")
-            em = None
-            email = (input("Ingrese su email: "))
-            while  validar_email(email) == False or registro.buscar_usuario(email,em) == False:
-                print("Email no válido.")
-                email = input("Ingrese su email: ")
-            email=email.lower()
-            # Agregue el getpass, simplemente por estetica, busque en internet alguna forma de ocultar la contraseña y me aparecio esto.
-            password = getpass("Ingrese su contraseña (Debe tener al menos 8 caracteres entre esos al menos una letra o numero): ")
-            password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
-            while not validar_password(password) or password != password_verificacion:
-                print("Contraseña no válida.")
-                password = getpass("Ingrese su contraseña: ")
-                password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
-            codigoadmin=input("Ingrese el codigo de administrador: ")
-            usuario = Usuario(nombre, dni,email, password)
-            registro.registrar_usuario(usuario)
-            if validar_email(email) == 'sistema.com.ar' and codigoadmin == '1234':
-                print('Bienvenido administrador')
-                pass
-            else:    
-                print("Usuario registrado correctamente.")
-           
-        case "2":
-            email = input("Ingrese su email: ")
-            email=email.lower()
-            p = input("Desea ver la contraseña que ingresaste? (s)")
-            match p:
-                case "s":
-                    password = input("Ingrese su contraseña: ")
-                case _:
-                    password = getpass("Ingrese su contraseña: ")
-            codigoadmin = input("Ingrese el codigo de administrador: ")
-            
-            es_admin=False
-            n = True
-            while n == True:
-                if login.iniciar_sesion(email, password):
-                    if validar_email(email)=='sistema.com.ar':
-                        while codigoadmin != '1234':
-                            print("Codigo de administrador no válido.")
-                            codigoadmin = input("Ingrese el codigo de administrador: ")
-                        es_admin=True
-                        usuario_actual = login.usuario_actual
-                        n = False
-                        
-                    else:
-                        usuario_actual = login.usuario_actual
-                        n = False
-                else:
-                    print("Email o contraseña incorrectos.")
-                    salir = input("¿Desea salir del programa? (s/n): ")
-                    salir = salir.lower()
-                    if salir == "s":
-                        exit()
-                        
-                    else:
+            print("1. Registrar como usuario")
+            print("2. Registrar como invitado")
+            opcion = input("Ingrese una opción (el numero): ")
+            match opcion:
+                case "1":
+                    nombre = input("Ingrese su nombre: ")
+                    while validar_nombre(nombre) == False:
+                        print("Nombre no válido.")
+                        nombre = input("Ingrese su nombre: ")
+                    dni = input("Ingrese su DNI: ")
+                    d = None
+                    while validar_dni(dni) == False or registro.buscar_usuario(d,dni) == False:
+                        print("DNI no válido.")
+                        dni = input("Ingrese su DNI: ")
+                    em = None
+                    email = (input("Ingrese su email: "))
+                    while  validar_email(email) == False or registro.buscar_usuario(email,em) == False:
+                        print("Email no válido.")
                         email = input("Ingrese su email: ")
-                        email=email.lower()
-                        p = input("Desea ver la contraseña que ingresaste? (s)")
-                        match p:
-                            case "s":
-                                password = input("Ingrese su contraseña: ")
-                            case _:
-                                password = getpass("Ingrese su contraseña: ")
-                        n = True
+                    email=email.lower()
+                    # Agregue el getpass, simplemente por estetica, busque en internet alguna forma de ocultar la contraseña y me aparecio esto.
+                    password = getpass("Ingrese su contraseña (Debe tener al menos 8 caracteres entre esos al menos una letra o numero): ")
+                    password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
+                    while not validar_password(password) or password != password_verificacion:
+                        print("Contraseña no válida.")
+                        password = getpass("Ingrese su contraseña: ")
+                        password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
+                    codigoadmin=input("Ingrese el codigo de administrador: ")
+                    usuario = Usuario(nombre, dni,email, password)
+                    registro.registrar_usuario(usuario)
+                    if validar_email(email) == 'sistema.com.ar' and codigoadmin == '1234':
+                        print('Bienvenido administrador')
+                        pass
+                    else:    
+                        print("Usuario registrado correctamente.")
+                case "2":
+                    nombre = input("Ingrese su nombre: ")
+                    while validar_nombre(nombre) == False:
+                        print("Nombre no válido.")
+                        nombre = input("Ingrese su nombre: ")
+                    dni = input("Ingrese su DNI: ")
+                    d = None
+                    while validar_dni(dni) == False or registroINV.buscar_usuario(d,dni) == False:
+                        print("DNI no válido.")
+                        dni = input("Ingrese su DNI: ")
+                    em = None
+                    email = (input("Ingrese su email: "))
+                    while  validar_email(email) == False or registroINV.buscar_usuario(email,em) == False:
+                        print("Email no válido.")
+                        email = input("Ingrese su email: ")
+                    email=email.lower()
+                    ingresos = 0
+                    usuario = Invitado(nombre, dni,email,ingresos)
+                    registroINV.registrar_usuario(usuario)
+        case "2":
+            print("1. Inicio de sesión como usuario")
+            print("2. Inicio de sesión como invitado")
+            opcion = input("Ingrese una opción (el numero): ")
+            match opcion:
+                case "1":
+                    email = input("Ingrese su email: ")
+                    email=email.lower()
+                    p = input("Desea ver la contraseña que ingresaste? (s)")
+                    match p:
+                        case "s":
+                            password = input("Ingrese su contraseña: ")
+                        case _:
+                            password = getpass("Ingrese su contraseña: ")
+                    codigoadmin = input("Ingrese el codigo de administrador: ")
+                    
+                    es_admin=False
+                    n = True
+                    while n == True:
+                        if login.iniciar_sesion(email, password):
+                            if validar_email(email)=='sistema.com.ar':
+                                while codigoadmin != '1234':
+                                    print("Codigo de administrador no válido.")
+                                    codigoadmin = input("Ingrese el codigo de administrador: ")
+                                es_admin=True
+                                usuario_actual = login.usuario_actual
+                                n = False
+                                
+                            else:
+                                usuario_actual = login.usuario_actual
+                                n = False
+                        else:
+                            print("Email o contraseña incorrectos.")
+                            salir = input("¿Desea salir del programa? (s/n): ")
+                            salir = salir.lower()
+                            if salir == "s":
+                                exit()
+                                
+                            else:
+                                email = input("Ingrese su email: ")
+                                email=email.lower()
+                                p = input("Desea ver la contraseña que ingresaste? (s)")
+                                match p:
+                                    case "s":
+                                        password = input("Ingrese su contraseña: ")
+                                    case _:
+                                        password = getpass("Ingrese su contraseña: ")
+                                n = True
+                    es_invitado = False
+                case "2":
+                    email = input("Ingrese su email: ")
+                    email=email.lower()
+                    dni = input("Ingrese su DNI: ")
+                    n = True
+                    while n == True:
+                        if logiINV.iniciar_sesion(email, dni):
+                            usuario_actual = logiINV.usuario_actual
+                            es_invitado = True
+                            es_admin = False
+                            n = False
+                        else:
+                            print("Email o dni incorrectos.")
+                            salir = input("¿Desea salir del programa? (s/n): ")
+                            salir = salir.lower()
+                            if salir == "s":
+                                exit()
+                                
+                            else:
+                                email = input("Ingrese su email: ")
+                                email=email.lower()
+                                dni = input("Ingrese su DNI: ")
+                                n = True
+
+
             print(f'Bienvenido {usuario_actual.nombre}')      
             s = True
             while s == True:
@@ -98,7 +154,8 @@ while True:
                         print('3. Modificar vehiculo')
                         print('4. ver stcok')
                         print('5. ver ventas')
-                        print('6. cerrar sesion')
+                        print("6. ver top usuarios invitados")
+                        print('7. cerrar sesion')
                         opcion = input("Ingrese una opción (el numero): ")
                         match opcion:
                             # Funciona
@@ -145,14 +202,70 @@ while True:
                             case "5":
                                 nombre_archivo = "ventas.txt"
                                 descargar_lista_ventas_estadisticas(nombre_archivo)
-
-                            # si esto no funciona estamo mal
                             case "6":
+                                # Estamos viendo que el grafico queda invertido y ademas no se visualiza la primer barra
+                                lista_invitados=[]
+                                matriz_invitados=[]
+                                acceso = []
+                                dni = []
+                                acceso1 = []
+                                with open ("invitado.txt","r") as archivo:
+                        
+                                    for linea in archivo:
+                                        lista_invitados= linea.strip().split(",")
+                                        matriz_invitados.append(lista_invitados)
+                                archivo.close()
+                                for i in range(len(matriz_invitados)):
+                                    acceso.append(int(matriz_invitados[i][3]))       
+                                acceso.sort(reverse=True)
+                                for j in range(len(acceso)):
+                                    if j<5:
+                                        acceso1.append(acceso[j])
+                                for j in range(len(acceso1)):
+                                        for i in range(len(matriz_invitados)):
+                                        
+                                            if matriz_invitados[i][3]==str(acceso1[j]):
+                                                dni.append(matriz_invitados[i][1])
+                                
+                                
+                                # for i in range(len(acceso1)):
+                                #     acceso1[i]=int(acceso1[i])
+                                #     print(acceso1[i])
+                                print(dni)
+                                plt.title(label="DNI por invitados",fontsize=20)
+                                plt.xlabel("DNI")
+                                plt.ylabel("INGRESOS")
+
+                                plt.bar(dni,acceso1)
+                                plt.show()
+                            # si esto no funciona estamo mal
+                            case "7":
                                 print("Gracias por usar el sistema.")
                                 s = False
                             case _:
                                 print("Opción inválida.")
                     else:
+                        # descargar un archivo de texto con los datos del usuario
+                        if es_invitado:
+                            lista = []
+                            
+                            with open("invitado.txt", "r") as archivo:
+                                lineas = archivo.readlines()
+                                for linea in lineas:
+                                    campos = linea.strip().split(",")
+                                    lista.append(campos)
+                            archivo.close()
+                            for i in range(len(lista)):
+                                if lista[i][1] == usuario_actual.dni and lista [i][2] == usuario_actual.email:
+                                    lista [i][3] = int(lista [i][3]) + 1
+                                    break
+                            
+                            with open("invitado.txt", "w") as archivo:
+                                for i in range(len(lista)):
+                                    archivo.write(f"{lista[i][0]},{lista[i][1]},{lista[i][2]},{lista[i][3]}\n")
+                            archivo.close()
+                                
+                        
                         print('1. Ver stock')
                         print('2. Comprar vehiculo')
                         print('3. Ver mis compras')
@@ -176,42 +289,104 @@ while True:
                                 lista = descargar_lista_ventas(nombre_archivo, usuario_actual)
                             # casiquesi
                             case "4":
-                                nombre_archivo = "usuarios.txt"
                                 lista_entrelazada = []
-                                try:
-                                    with open(nombre_archivo, "r") as archivo:
-                                        lineas = archivo.readlines()
-                                        for linea in lineas:
-                                            campos = linea.strip().split(",")
-                                            lista_entrelazada.append(campos)
-                                    archivo.close()
-                                except FileNotFoundError:
-                                    print("No se encontró el archivo.")
+                                if es_invitado == False:
+                                    try:
+                                        with open("usuarios.txt", "r") as archivo:
+                                            lineas = archivo.readlines()
+                                            for linea in lineas:
+                                                campos = linea.strip().split(",")
+                                                lista_entrelazada.append(campos)
+                                        archivo.close()
+                                    except FileNotFoundError:
+                                        print("No se encontró el archivo.")
+                                else:
+                                    try:
+                                        with open("invitado.txt", "r") as archivo:
+                                            lineas = archivo.readlines()
+                                            for linea in lineas:
+                                                campos = linea.strip().split(",")
+                                                lista_entrelazada.append(campos)
+                                        archivo.close()
+                                    except FileNotFoundError:
+                                        print("No se encontró el archivo.")
                                 print("1. Modificar nombre")
-                                print("2. Modificar contraseña")
+                                print("2. Modificar email")
+                                if es_invitado == False:
+                                    print("3. Modificar contraseña")
+
+
                                 opcion = input("Ingrese una opción (el numero): ")
-                                match opcion:
-                                    case "1":
-                                        nombre = input("Ingrese nueva nombre: ")
-                                        for i in range(len(lista_entrelazada)):
-                                            if lista_entrelazada[i][2] == usuario_actual.email:
-                                                lista_entrelazada[i][0] = nombre
-                                    case "2":
-                                        password = getpass("Ingrese su contraseña: ")
-                                        password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
-                                        while not validar_password(password) or password != password_verificacion:
-                                            print("Contraseña no válida.")
-                                            password = getpass("Ingrese su contraseña: ")
-                                            password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
-                                        for i in range(len(lista_entrelazada)):
-                                            if lista_entrelazada[i][2] == usuario_actual.email:
-                                                lista_entrelazada[i][3] = password
-                                    case _:
-                                        print("Opción inválida.")
-                                with open(nombre_archivo, "w") as archivo:
-                                    for i in range(len(lista_entrelazada)): 
-                                        archivo.write(f"{lista_entrelazada[i][0]},{lista_entrelazada[i][1]},{lista_entrelazada[i][2]},{lista_entrelazada[i][3]}\n")
-                                archivo.close()
+                                if es_invitado == False:
+                                    match opcion:
+                                        case "1":
+                                            nombre = input("Ingrese su nombre: ")
+                                            while validar_nombre(nombre) == False:
+                                                print("Nombre no válido.")
+                                                nombre = input("Ingrese su nombre: ")
+
+                                            for i in range(len(lista_entrelazada)):
+                                                if lista_entrelazada[i][2] == usuario_actual.email:
+                                                    lista_entrelazada[i][0] = nombre
+                                        
+                                        case "3":
+                                            if es_invitado == False:
+                                                password = getpass("Ingrese su contraseña: ")
+                                                password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
+                                                while not validar_password(password) or password != password_verificacion:
+                                                    print("Contraseña no válida.")
+                                                    password = getpass("Ingrese su contraseña: ")
+                                                    password_verificacion = getpass("Ingrese su contraseña nuevamente: ")
+                                                for i in range(len(lista_entrelazada)):
+                                                    if lista_entrelazada[i][2] == usuario_actual.email:
+                                                        lista_entrelazada[i][3] = password
+                                        case "2":
+                                            em = None
+                                            email = (input("Ingrese su email: "))
+                                            while  validar_email(email) == False or registro.buscar_usuario(email,em) == False:
+                                                print("Email no válido.")
+                                                email = input("Ingrese su email: ")
+                                            email=email.lower()
+                                            for i in range(len(lista_entrelazada)):
+                                                    if lista_entrelazada[i][2] == usuario_actual.email:
+                                                        lista_entrelazada[i][2] = email
+                                        
+                                        case _:
+                                            print("Opción inválida.")
+                                else:
+                                    match opcion:
+                                        case "1":
+                                            nombre = input("Ingrese su nombre: ")
+                                            while validar_nombre(nombre) == False:
+                                                print("Nombre no válido.")
+                                                nombre = input("Ingrese su nombre: ")
+
+                                            for i in range(len(lista_entrelazada)):
+                                                if lista_entrelazada[i][2] == usuario_actual.email:
+                                                    lista_entrelazada[i][0] = nombre
+                                        case "2":
+                                            em = None
+                                            email = (input("Ingrese su email: "))
+                                            while  validar_email(email) == False or registroINV.buscar_usuario(email,em) == False:
+                                                print("Email no válido.")
+                                                email = input("Ingrese su email: ")
+                                            email=email.lower()
+                                            for i in range(len(lista_entrelazada)):
+                                                    if lista_entrelazada[i][2] == usuario_actual.email:
+                                                        lista_entrelazada[i][2] = email
+                                        case _:
+                                            print("Opción inválida.")
+
+                                if es_invitado == False:
+                                    with open("usuarios.txt", "w") as archivo:
+                                        for i in range(len(lista_entrelazada)): 
+                                            archivo.write(f"{lista_entrelazada[i][0]},{lista_entrelazada[i][1]},{lista_entrelazada[i][2]},{lista_entrelazada[i][3]}\n")
+                                    archivo.close()
+                                elif es_invitado == True:
+                                    with open("invitado.txt", "w") as archivo:
+                                        for i in range(len(lista_entrelazada)): 
+                                            archivo.write(f"{lista_entrelazada[i][0]},{lista_entrelazada[i][1]},{lista_entrelazada[i][2]},{lista_entrelazada[i][3]}\n")
+                                    archivo.close()
 
 
 
@@ -227,5 +402,6 @@ while True:
             exit()
         case _:
             print("Opción inválida.")
+
 
 
